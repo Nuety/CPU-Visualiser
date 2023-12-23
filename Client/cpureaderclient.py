@@ -14,7 +14,7 @@ client_socket.setblocking(0)
 
 while True:
     # Calculate cpu%
-    cpu_usage = psutil.cpu_percent(interval=0.2, percpu=True)
+    cpu_usage = psutil.cpu_percent(interval=0.05, percpu=True)
     
 
     # Convert the list to a string for easy transmission

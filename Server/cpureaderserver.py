@@ -49,7 +49,7 @@ class cpuServer(SampleBase):
                     client_socket.setblocking(1)
                     data = client_socket.recv(1024).decode()
                     data = data.split('-')[0]
-                    print(data)
+                    client_socket.send(b'OK')
                     if data == 'UPDATE':
                         continue
                     if not data:
@@ -108,7 +108,7 @@ class cpuServer(SampleBase):
                             client_socket.send(b'OK')
                             break
 
-                        time.sleep(0.1)
+                        time.sleep(0.05)
 
                 except Exception as e:
                     # Print or handle the exception'
