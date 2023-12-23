@@ -34,61 +34,75 @@ class cpuServer(SampleBase):
             print(f"Connection from {client_address}")
             
             cpu_old = []
+            
+            client_socket.send(b'OK')
 
+
+            first = 0
             while True:
                 try:
-                    # Receive data from the client
+                    client_socket.setblocking(1)
                     data = client_socket.recv(1024).decode()
+                    client_socket.send(b'OK')
                     if not data:
                         raise ConnectionError("Connection closed by the client")
                     num_cpu = int(data.count(',')) + 1
 
                     cpu_str = data.split(',')
+                    
 
-                    cpu_diff = [cpu_list[i] - cpu_old[i] for i in range(num_cpu)]
                     # How wide should a cpu be
                     cpucol = width / num_cpu
                     #how high cpu should show itself
                     cpu_list = list(map(float, cpu_str))
-                    print(cpu_list)
+                    if first == 0:
+                        cpu_old = [0] * len(cpu_list)
+                        first = 1
+                    
+                    while True:
+                        for index, cpu in enumerate(cpu_list):
+                            # Define color components for the current cpu
+                            red, green, blue = 100, 100, 100  # Default color
+                            diff = int(cpu) - cpu_old[index]
+                            if 0.0 <= cpu_old[index] <= height * 0.33:
+                                red, green, blue = 0, 100, 0  # Green
+                            elif height * 0.33 < cpu_old[index] <= height * 0.66:
+                                red, green, blue = 100, 100, 0  # Yellow
+                            elif height * 0.66 < cpu_old[index] <= height:
+                                red, green, blue = 100, 0, 0  # Red
+                            else:
+                                red, green, blue = 100, 100, 100  # Gray for unknown
 
-                    for index, cpu in enumerate(cpu_list):
-                        if cpu == 0.0:
-                            cpurow = 1
-                        else:
-                            cpurow = int((cpu / 100) * height)
-                            
-                        # Define color components for the current cpu
-                        red, green, blue = 100, 100, 100  # Default color
-                        
-
-                        # for col in range(int(index * cpucol), int((index + 1) * cpucol)):
-                        for col in range(int(index * cpucol), int((index + 1) * cpucol)):
-                            for row in range(cpu_list[index], cpu_diff[index]):
-                                if cpu_diff[index] >= 0:
-                                    # Color is set 0-33% green 33-66% yellow 66-100% red
-                                    if 0.0 <= row <= height * 0.33:
-                                        red, green, blue = 0, 100, 0  # Green
-                                    elif height * 0.33 < row <= height * 0.66:
-                                        red, green, blue = 100, 100, 0  # Yellow
-                                    elif height * 0.66 < row <= height:
-                                        red, green, blue = 100, 0, 0  # Red
-                                    else:
-                                        red, green, blue = 100, 100, 100  # Gray for unknown
-                                    self.matrix.SetPixel(row,col,red,green,blue)
+                            for col in range(int(index * cpucol), int((index + 1) * cpucol)):
+                                if diff > 0:
+                                    inc = 1
+                                    self.matrix.SetPixel(cpu_old[index],col,red,green,blue)
+                                elif diff < 0:
+                                    self.matrix.SetPixel(cpu_old[index] + 1,col,0,0,0)
+                                    inc = -1
                                 else:
-                                    red, green, blue = 0, 0, 0  # Black to remove
-                                    self.matrix.SetPixel(row,col,red,green,blue)
-                        for col in range(int(index * cpucol), int((index + 1) * cpucol)):
-                            for row in range(cpurow, height):
-                                self.matrix.SetPixel(row,col,0,0,100)
+                                    inc = 0
 
-                    cpu_old = cpu_list
+                            cpu_old[index] += inc
+                        client_socket.setblocking(0)
+                        message = ""
+                        try:
+                            message = client_socket.recv(1024)
+                            
+                        except socket.error as e:
+                            pass
 
+                        if message == b'UPDATE':
+                            # Receive data from the client
+                            client_socket.send(b'OK')
+                            break
+
+                        time.sleep(0.1)
 
                 except Exception as e:
                     # Print or handle the exception'
                     self.matrix.Clear()
+                    client_socket.close()
                     print(f"An exception occurred: {e}")
                     break
 
