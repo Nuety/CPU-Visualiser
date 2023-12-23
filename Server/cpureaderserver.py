@@ -33,6 +33,7 @@ class cpuServer(SampleBase):
             client_socket, client_address = server_socket.accept()
             print(f"Connection from {client_address}")
             
+            cpu_old = []
 
             while True:
                 try:
@@ -48,6 +49,7 @@ class cpuServer(SampleBase):
                     cpucol = width / num_cpu
                     #how high cpu should show itself
                     cpu_list = list(map(float, cpu_str))
+                    cpu_diff = cpu_old - cpu_list
                     print(cpu_list)
 
                     for index, cpu in enumerate(cpu_list):
@@ -59,31 +61,23 @@ class cpuServer(SampleBase):
                         # Define color components for the current cpu
                         red, green, blue = 100, 100, 100  # Default color
                         
-                        if 0.0 <= cpu <= 33.0:
-                            red, green, blue = 0, 100, 0  # Green
-                        elif 33.0 < cpu <= 66.0:
-                            red, green, blue = 100, 100, 0  # Yellow
-                        elif 66.0 < cpu <= 100.0:
-                            red, green, blue = 100, 0, 0  # Red
-                        else:
-                            red, green, blue = 100, 100, 100  # Gray for unknown
-                        #python 3.10
-                        # match cpu:
-                        #     case num if 0.0 <= num < 33.0:
-                        #         red, green, blue = 0, 100, 0  # Green
-                        #     case num if 33.0 <= num < 66.0:
-                        #         red, green, blue = 100, 100, 0  # Yellow
-                        #     case num if 66.0 <= num <= 100.0:
-                        #         red, green, blue = 100, 0, 0  # Red
-                        #     case _:
-                        #         pass
+
                         for col in range(int(index * cpucol), int((index + 1) * cpucol)):
                             for row in range(cpurow):
+                                if 0.0 <= row <= 33.0:
+                                    red, green, blue = 0, 100, 0  # Green
+                                elif 33.0 < row <= 66.0:
+                                    red, green, blue = 100, 100, 0  # Yellow
+                                elif 66.0 < row <= 100.0:
+                                    red, green, blue = 100, 0, 0  # Red
+                                else:
+                                    red, green, blue = 100, 100, 100  # Gray for unknown
                                 self.matrix.SetPixel(row,col,red,green,blue)
                         for col in range(int(index * cpucol), int((index + 1) * cpucol)):
                             for row in range(cpurow, height):
                                 self.matrix.SetPixel(row,col,0,0,0)
 
+                    cpu_old = cpu_list
 
 
                 except Exception as e:
