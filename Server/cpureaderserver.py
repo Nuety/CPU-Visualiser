@@ -63,11 +63,11 @@ class cpuServer(SampleBase):
 
                         for col in range(int(index * cpucol), int((index + 1) * cpucol)):
                             for row in range(cpurow):
-                                if 0.0 <= row <= 33.0:
+                                if 0.0 <= row <= height * 0.33:
                                     red, green, blue = 0, 100, 0  # Green
-                                elif 33.0 < row <= 66.0:
+                                elif height * 0.33 < row <= height * 0.66:
                                     red, green, blue = 100, 100, 0  # Yellow
-                                elif 66.0 < row <= 100.0:
+                                elif height * 0.66 < row <= height:
                                     red, green, blue = 100, 0, 0  # Red
                                 else:
                                     red, green, blue = 100, 100, 100  # Gray for unknown
