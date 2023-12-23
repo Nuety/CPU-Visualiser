@@ -45,6 +45,7 @@ class cpuServer(SampleBase):
 
                     cpu_str = data.split(',')
 
+                    cpu_diff = [cpu_list[i] - cpu_old[i] for i in range(num_cpu)]
                     # How wide should a cpu be
                     cpucol = width / num_cpu
                     #how high cpu should show itself
@@ -61,20 +62,26 @@ class cpuServer(SampleBase):
                         red, green, blue = 100, 100, 100  # Default color
                         
 
+                        # for col in range(int(index * cpucol), int((index + 1) * cpucol)):
                         for col in range(int(index * cpucol), int((index + 1) * cpucol)):
-                            for row in range(cpurow):
-                                if 0.0 <= row <= height * 0.33:
-                                    red, green, blue = 0, 100, 0  # Green
-                                elif height * 0.33 < row <= height * 0.66:
-                                    red, green, blue = 100, 100, 0  # Yellow
-                                elif height * 0.66 < row <= height:
-                                    red, green, blue = 100, 0, 0  # Red
+                            for row in range(cpu_list[index], cpu_diff[index]):
+                                if cpu_diff[index] >= 0:
+                                    # Color is set 0-33% green 33-66% yellow 66-100% red
+                                    if 0.0 <= row <= height * 0.33:
+                                        red, green, blue = 0, 100, 0  # Green
+                                    elif height * 0.33 < row <= height * 0.66:
+                                        red, green, blue = 100, 100, 0  # Yellow
+                                    elif height * 0.66 < row <= height:
+                                        red, green, blue = 100, 0, 0  # Red
+                                    else:
+                                        red, green, blue = 100, 100, 100  # Gray for unknown
+                                    self.matrix.SetPixel(row,col,red,green,blue)
                                 else:
-                                    red, green, blue = 100, 100, 100  # Gray for unknown
-                                self.matrix.SetPixel(row,col,red,green,blue)
+                                    red, green, blue = 0, 0, 0  # Black to remove
+                                    self.matrix.SetPixel(row,col,red,green,blue)
                         for col in range(int(index * cpucol), int((index + 1) * cpucol)):
                             for row in range(cpurow, height):
-                                self.matrix.SetPixel(row,col,0,0,0)
+                                self.matrix.SetPixel(row,col,0,0,100)
 
                     cpu_old = cpu_list
 
