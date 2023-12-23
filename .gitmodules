@@ -1,3 +1,6 @@
 [submodule "rpi-rgb-led-matrix"]
 	path = rpi-rgb-led-matrix
 	url = https://github.com/Nuety/rpi-rgb-led-matrix.git
+[submodule "rpimatrix"]
+	path = rpimatrix
+	url = https://github.com/Nuety/rpi-rgb-led-matrix.git
