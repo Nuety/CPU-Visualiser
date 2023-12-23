@@ -49,7 +49,6 @@ class cpuServer(SampleBase):
                     cpucol = width / num_cpu
                     #how high cpu should show itself
                     cpu_list = list(map(float, cpu_str))
-                    cpu_diff = cpu_old - cpu_list
                     print(cpu_list)
 
                     for index, cpu in enumerate(cpu_list):
