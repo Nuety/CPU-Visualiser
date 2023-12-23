@@ -22,6 +22,11 @@ class cpuServer(SampleBase):
         server_port = 5555
 
 
+        # thresholds
+        tg = 0.25 #green
+        ty = 0.50 #yellow
+        to = 0.75 #orange
+
 
 
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -43,7 +48,10 @@ class cpuServer(SampleBase):
                 try:
                     client_socket.setblocking(1)
                     data = client_socket.recv(1024).decode()
-                    client_socket.send(b'OK')
+                    data = data.split('-')[0]
+                    print(data)
+                    if data == 'UPDATE':
+                        continue
                     if not data:
                         raise ConnectionError("Connection closed by the client")
                     num_cpu = int(data.count(',')) + 1
@@ -64,11 +72,13 @@ class cpuServer(SampleBase):
                             # Define color components for the current cpu
                             red, green, blue = 100, 100, 100  # Default color
                             diff = int(cpu) - cpu_old[index]
-                            if 0.0 <= cpu_old[index] <= height * 0.33:
+                            if 0.0 <= cpu_old[index] <= height * tg:
                                 red, green, blue = 0, 100, 0  # Green
-                            elif height * 0.33 < cpu_old[index] <= height * 0.66:
+                            elif height * tg < cpu_old[index] <= height * ty:
                                 red, green, blue = 100, 100, 0  # Yellow
-                            elif height * 0.66 < cpu_old[index] <= height:
+                            elif height * ty < cpu_old[index] <= height * to:
+                                red, green, blue = 100, 64, 0  # Orange
+                            elif height * to < cpu_old[index] <= height:
                                 red, green, blue = 100, 0, 0  # Red
                             else:
                                 red, green, blue = 100, 100, 100  # Gray for unknown
@@ -87,12 +97,13 @@ class cpuServer(SampleBase):
                         client_socket.setblocking(0)
                         message = ""
                         try:
-                            message = client_socket.recv(1024)
+                            message = client_socket.recv(1024).decode()
                             
                         except socket.error as e:
                             pass
 
-                        if message == b'UPDATE':
+                        message = message.split('-')[0]
+                        if message == 'UPDATE':
                             # Receive data from the client
                             client_socket.send(b'OK')
                             break
