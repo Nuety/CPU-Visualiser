@@ -88,7 +88,7 @@ class cpuServer(SampleBase):
                                     inc = 1
                                     self.matrix.SetPixel(cpu_old[index],col,red,green,blue)
                                 elif diff < 0:
-                                    self.matrix.SetPixel(cpu_old[index] + 1,col,0,0,0)
+                                    self.matrix.SetPixel(cpu_old[index],col,0,0,0)
                                     inc = -1
                                 else:
                                     inc = 0
