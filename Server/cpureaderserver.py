@@ -27,9 +27,6 @@ class cpuServer(SampleBase):
         ty = 0.50 #yellow
         to = 0.75 #orange
 
-        # timeout
-        timeout = 0
-
 
 
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -110,13 +107,7 @@ class cpuServer(SampleBase):
                             # Receive data from the client
                             client_socket.send(b'OK')
                             break
-                        
-                        # enforce timeout
-                        if timeout == 20:
-                            timeout = 0
-                            break
-                        
-                        timeout += 1
+
                         time.sleep(0.05)
 
                 except Exception as e:
