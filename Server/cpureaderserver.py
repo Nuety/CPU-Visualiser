@@ -89,9 +89,9 @@ class cpuServer(SampleBase):
                             for col in range(int(index * cpucol), int((index + 1) * cpucol)):
                                 if diff > 0:
                                     inc = 1
-                                    self.matrix.SetPixel(cpu_old[index],col,red,green,blue)
+                                    self.matrix.SetPixel(col,cpu_old[index],red,green,blue)
                                 elif diff < 0:
-                                    self.matrix.SetPixel(cpu_old[index],col,0,0,0)
+                                    self.matrix.SetPixel(col,cpu_old[index],0,0,0)
                                     inc = -1
                                 else:
                                     inc = 0
