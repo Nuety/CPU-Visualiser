@@ -3,7 +3,7 @@ import socket
 
 # Set up a server
 # server_ip = '192.168.1.131'  # Update with the IP address of your server
-server_ip = '172.26.1.131'  # Update with the IP address of your server
+server_ip = 'rpi3.local'  # Update with the IP address of your server
 server_port = 5555
 
 print(f"Connecting to server on port {server_port}")
